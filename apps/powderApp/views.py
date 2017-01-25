@@ -23,7 +23,7 @@ def success(request):
         # }
         return render(request, 'powderApp/success.html')
 
-def add_user(request):
+def python_add_user(request):
     result = models.User.objects.register(request.POST)
     if result[0] == False:
         for i in result[1]:
@@ -44,8 +44,7 @@ def login(request):
 def log_user_in(request, user):
     request.session['active_user'] = {
         'id' : user.id,
-        'name' : user.name,
-        'alias' : user.alias,
+        'username' : user.username,
         'email' : user.email,
     }
     return redirect ('/success')
@@ -62,6 +61,18 @@ def tasks(request):
         allUsers = models.User.objects.all()
         response = serializers.serialize('json', allUsers)
         return HttpResponse(response)
-    else if request.method == "POST":
+    elif request.method == "POST":
         new_powder_run = models.PowderRun.objects.add_new_powder_run(request.POST)
-        return redirect('/success')
+        return HttpResponse(new_powder_run)
+
+
+def add_user(request):
+    result = models.User.objects.register(request.POST)
+    if result[0] == False:
+        for i in result[1]:
+            messages.add_message(request, messages.ERROR, i)
+        return redirect('/')
+    else:
+        response = serializers.serialize('json', result[1])
+        return HttpResponse(response)
+        # log_user_in(request, result[1])

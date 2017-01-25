@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^login$', views.login),
     url(r'^logout$', views.logout),
     url(r'^tasks$',views.tasks),
+    url(r'^python_add_user$', views.python_add_user),
 ]

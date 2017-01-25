@@ -32,27 +32,26 @@ class UserManager(models.Manager):
         return (False, errors)
 
     def register(self, post):
-        name = post['name']
-        alias = post['alias']
+        username = post['username']
         email = post['email']
         password = post['password']
         confirm_password = post['confirm_password']
 
         errors = []
         user_list = User.objects.filter(email = email)
-        alias_list = User.objects.filter(alias = alias)
-        if len(name) < 1:
-            errors.append('Name is required')
-        if len(name) < 3:
-            errors.append('Name requires more than 2 characters')
-        if not name_regex.match(name):
-            errors.append('Name must only contain letters')
-        if len(alias) < 1:
-            errors.append('Alias is required')
-        if len(alias) < 3:
-            errors.append('Alias requires more than 2 characters')
-        if alias_list:
-            errors.append('Alias already exists')
+        # alias_list = User.objects.filter(alias = alias)
+        if len(username) < 1:
+            errors.append('Userame is required')
+        if len(username) < 3:
+            errors.append('Username requires more than 2 characters')
+        if not name_regex.match(username):
+            errors.append('username must only contain letters')
+        # if len(alias) < 1:
+        #     errors.append('Alias is required')
+        # if len(alias) < 3:
+        #     errors.append('Alias requires more than 2 characters')
+        # if alias_list:
+        #     errors.append('Alias already exists')
         if not EMAIL_REGEX.match(email):
             errors.append('Email is invalid!')
         if user_list:
@@ -66,12 +65,12 @@ class UserManager(models.Manager):
         if len(errors) > 0:
             return (False, errors)
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        user = self.create(name=name, alias=alias, email=email, pw_hash=pw_hash)
+        user = self.create(username=username, email=email, pw_hash=pw_hash)
         return (True, user)
 
+
 class User(models.Model):
-    name = models.CharField(max_length=45)
-    alias = models.CharField(max_length=45)
+    username = models.CharField(max_length=45)
     email = models.CharField(max_length=100)
     pw_hash = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -92,7 +91,7 @@ class PowderRunManager(models.Manager):
         jumpsCount = post['jumpsCount']
         userID = post['userID']
         user = User.objects.get(id=userID)
-        new_powder_run = self.create(user=user, altitudeDrop=altitudeDrop, distance=distance, time=time, topSpeed=topSpeed, avgSpeed=avgSpeed, biffsCount=biffsCount, jumpsCount=jumpsCount,)
+        new_powder_run = self.create(user=user, altitudeDrop=altitudeDrop, distance=distance, time=time, topSpeed=topSpeed, avgSpeed=avgSpeed, biffsCount=biffsCount, jumpsCount=jumpsCount)
         return (True, new_powder_run)
 
     def delete_powder_run(self, post):
